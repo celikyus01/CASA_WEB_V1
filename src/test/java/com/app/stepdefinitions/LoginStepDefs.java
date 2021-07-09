@@ -9,18 +9,30 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.junit.Cucumber;
 import org.junit.Assert;
+import org.junit.Before;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 public class LoginStepDefs {
 
+
+
+
+
     private LoginPage loginPage = new LoginPage();
     private DashboardPage dashboardPage = new DashboardPage();
 
+
+
+
+
+
     @Given("I am on Login Screen")
     public void i_am_on_Login_Screen() {
+        Hooks.scenario.write("LOGIN_DEMO");
         Driver.get().get(ConfigurationReader.get("url"));
     }
 
@@ -33,7 +45,6 @@ public class LoginStepDefs {
     @Then("Click on Login")
     public void click_on_Login() {
         loginPage.submitBtn.click();
-
     }
 
     @Then("Verify Inline error message for Username field {string} displayed")

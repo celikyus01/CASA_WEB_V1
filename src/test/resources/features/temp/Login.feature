@@ -15,7 +15,7 @@ Feature: Authentication login
       | ValidUsername | InvalidPassword | InvalidUsername | ValidPassword |
       | Swathi.priya  | Vashvika        | Swathi          | Vashvika14@   |
 
-  @login_succesful
+  @login_succesful @login_succesful1
   Scenario Outline: Succesful Login
     Given I am on Login Screen
     When Enter Username "<ValidUsername>" and Password "<ValidPassword>"

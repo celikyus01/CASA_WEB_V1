@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
         glue = "com/app/stepdefinitions",
         strict = true,
         dryRun = false,
-        tags = "@M3-4392"
+        tags = " @login_succesful1"
 )
 public class CukesRunner {
 }

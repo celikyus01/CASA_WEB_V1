@@ -12,6 +12,7 @@ import org.openqa.selenium.TakesScreenshot;
 import java.util.concurrent.TimeUnit;
 
 public class Hooks {
+    Scenario scenario;
 
     @Before
     public void setUp(){
@@ -23,10 +24,15 @@ public class Hooks {
         if(scenario.isFailed()){
             final byte[] screenshot = ((TakesScreenshot) Driver.get()).getScreenshotAs(OutputType.BYTES);
             scenario.attach(screenshot,"image/png","screenshot");
+            this.scenario=scenario;
         }
 
         Driver.closeDriver();
 
+    }
+
+    public void log(String message){
+        this.scenario.log(message);
     }
 
     @Before("@abc")

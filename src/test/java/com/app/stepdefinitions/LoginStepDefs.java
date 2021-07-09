@@ -5,6 +5,8 @@ import com.app.pages.LoginPage;
 import com.app.utilities.BrowserUtils;
 import com.app.utilities.ConfigurationReader;
 import com.app.utilities.Driver;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
@@ -28,7 +30,9 @@ public class LoginStepDefs {
     }
 
     @Then("Click on Login")
-    public void click_on_Login() {
+    public void click_on_Login(Scenario scenario) {
+        scenario.log("DEMO");
+        new Hooks().log("DEMO");
         loginPage.submitBtn.click();
 
     }
@@ -48,5 +52,12 @@ public class LoginStepDefs {
     public void verifyPageTitleAs(String expectedTitle) {
         String actualTitle = dashboardPage.pageTitle.getText();
         assertEquals("!! NOTE: Title was expected to be "+expectedTitle+", but found" +actualTitle ,expectedTitle,actualTitle);
+    }
+
+    @And("logout from user")
+    public void logoutFromUser() {
+
+
+
     }
 }

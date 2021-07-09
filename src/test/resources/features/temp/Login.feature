@@ -1,6 +1,6 @@
 @login
 Feature: Authentication login
-
+  @M3-4392
   Scenario Outline: M3-4392_Verify Login failure scenario
     Given I am on Login Screen
     Then Enter Username '<ValidUsername>' and Password '<InvalidPassword>'

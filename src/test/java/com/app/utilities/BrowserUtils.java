@@ -24,8 +24,8 @@ public class BrowserUtils {
     }
 
 
-    public static WebDriverWait wait(int secondds) {
-        return new WebDriverWait(Driver.get(), secondds);
+    public static WebDriverWait wait(int seconds) {
+        return new WebDriverWait(Driver.get(), seconds);
     }
 
 

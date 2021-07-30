@@ -1,5 +1,6 @@
 package com.app.utilities;
 
+import com.app.stepdefinitions.Hooks;
 import io.cucumber.java.Scenario;
 import org.junit.Assert;
 import org.openqa.selenium.*;
@@ -14,10 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 public class BrowserUtils {
 
+    private  static WebDriverWait webDriverWait = new WebDriverWait(Driver.get(), 10);
+
 
     public static void waitFor(int seconds) {
         try {
-            Thread.sleep(seconds);
+            Thread.sleep(seconds*1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -60,6 +63,7 @@ public class BrowserUtils {
         return ((JavascriptExecutor) Driver.get()).executeScript(script);
 
     }
+
 
     public static boolean wait(WebElement webElement, String elementName) {
 
@@ -106,35 +110,43 @@ public class BrowserUtils {
         } catch (StaleElementReferenceException s) {
             //wait();
 
-            ScrolltoElement(element);
+            scrolltoElement(element);
             click(element, elementName);
         } catch (Exception e) {
-            ScrolltoElement(element);
+            scrolltoElement(element);
             element.click();
             //steplog.AddStepLog("Element (" + elementName + " )  is clicked");
         }
     }
 
-    public static void click(By by){
-        try{
+    public static void click(By by) {
+        try {
             Driver.get().findElement(by).click();
-        }catch (StaleElementReferenceException s){
-            ScrolltoElement(by);
+        } catch (StaleElementReferenceException s) {
+            scrolltoElement(by);
             click(by);
         }
-
     }
 
+
+
+    public static void clickWithJS(WebElement element) {
+        ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].click();", element);
+    }
+
+    public static void clickWithJS(By by) {
+        ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].click();", Driver.get().findElement(by));
+    }
 
     public static void scrollDown() {
         executeScript("window.scrollTo(0, 200)");
     }
 
-    public static void ScrolltoElement(WebElement element) {
+    public static void scrolltoElement(WebElement element) {
         ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 
-    public static void ScrolltoElement(By by) {
+    public static void scrolltoElement(By by) {
         ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].scrollIntoView(true);", Driver.get().findElement(by));
     }
 
@@ -155,7 +167,7 @@ public class BrowserUtils {
             wait(element, elementname);
             VisibleText = element.getText();
         } catch (Exception e) {
-            ScrolltoElement(element);
+            scrolltoElement(element);
             VisibleText = element.getText();
         }
         return VisibleText;
@@ -197,7 +209,7 @@ public class BrowserUtils {
             if (elements.stream().findAny().equals(text.trim())) {
                 elements.stream().filter(x -> x.equals(text.trim())).findFirst().get().click();
             } else {
-                ScrolltoElement(getElementsBycssSelector(locator).get(length - 1));
+                scrolltoElement(getElementsBycssSelector(locator).get(length - 1));
 
                 elements = getElementsBycssSelector(locator);
                 length = elements.size();
@@ -339,7 +351,7 @@ public class BrowserUtils {
         temp = length = elements.size();
         do {
 
-            ScrolltoElement(getElementsBycssSelector(locator).get(length - 1));
+            scrolltoElement(getElementsBycssSelector(locator).get(length - 1));
             elements = getElementsBycssSelector(locator);
             length = elements.size();
 
@@ -461,13 +473,33 @@ public class BrowserUtils {
         }
     }
 
-    public static void log(Scenario scenario){
+    public static void waitForElementToBeClickable(WebElement element){
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(element));
+    }
 
-        scenario.log("DEMO");
+    public static void waitForElementToBeClickable(By by){
+        webDriverWait.until(ExpectedConditions.elementToBeClickable(Driver.get().findElement(by)));
+    }
 
+    public static void waitForElementToBeVisible(WebElement element){
+        webDriverWait.until(ExpectedConditions.visibilityOf(element));
+    }
+
+    public static void waitForElementToBeVisible(By by){
+        webDriverWait.until(ExpectedConditions.visibilityOf(Driver.get().findElement(by)));
     }
 
 
+    public static void log(String data){
+        Hooks.scenario.log(data);
+    }
+
+    public static void logScreenShot(String scenarioName) {
+
+        final byte[] screenshot = ((TakesScreenshot) Driver.get()).getScreenshotAs(OutputType.BYTES);
+        Hooks.scenario.attach(screenshot,"image/png",scenarioName);
+
+    }
 
 }
 

@@ -1,22 +1,7 @@
 ﻿Feature: SiteCreateDelete
 
 
-  @wip6
-  Scenario Outline: M3-4298,M3-6023_Site creation deletion functionality
-    Given Log in as a "<LoggedInRole>"
-    When Navigate to "Sites" page
-#    When the user gets all scenarios from "Testdata" excel file "Usermanagement" sheet
-    When the user clicks on the "Add Site"
-    And the user clicks on the "Optional Information"
-    When Enter the testdata for the "<Scenarioname>" scenario
-    When the user clicks on the "Create Users"
-    Then Verify User has Created Successfully
-    When the user clicks on the "View User"
-    Then View the user and verify the details as per '<ScenarioName>'
-    Then Delete the newly created user
-    Examples:
-      | Scenarioname           | LoggedInRole |
-      | AsDeveloperCreateSite1 | Developer    |
+
 
 
   Scenario Outline: M3-4298,M3-6023_Site creation deletion functionality

@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
         glue = "com/app/stepdefinitions",
         strict = true,
         dryRun = false,
-        tags = "@create1"
+        tags = "@QTTP-17"
 )
 public class CukesRunner {
 }

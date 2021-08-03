@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,6 @@ public class UsersPage extends BasePage {
 
     @FindBy(xpath = "//div[@class='element roles-list']//span")
     public List<WebElement> rolesAssignedMyProfile;
-
-
 
 
     @FindBy(xpath = "//h2[.='Success!']")
@@ -144,10 +143,11 @@ public class UsersPage extends BasePage {
 
 
     public void editUserByUserName(String username) {
-        //  navigateToMenu("Users");
+          navigateToMenu("Users");
         Assert.assertTrue("FAIL: failed to get title as View Users", new UsersPage().verifyTitle("View Users"));
 
         try {
+            BrowserUtils.waitFor(2);
             new UsersPage().searchUserInputBox.sendKeys(username, Keys.ENTER);
             BrowserUtils.waitFor(2);
             Driver.get().findElement(By.xpath("//*[.='" + username + "']/..//a[@class='tableButton edit pointer']")).click();
@@ -177,7 +177,7 @@ public class UsersPage extends BasePage {
      * the user detail page should be displayed before this method is invoked
      * it only enters the data, it doesn't click the submit button
      */
-    public void enterUserDetails(String username, String emailaddress, String confirmEmailaddress, String title, String firstName, String middleName, String surname, String phoneNumber, List<String> assignedRoleList, String country, String organistaion) {
+    public void enterUserDetails(String username, String emailaddress, String confirmEmailaddress, String title, String firstName, String middleName, String surname, String phoneNumber, List<String> assignedRoleList, String country, String organistaion, List<String> sites, List<String> buildings) {
 
         sendKeysToInputBox("username", username);
         sendKeysToInputBox("em_address", emailaddress);
@@ -189,10 +189,61 @@ public class UsersPage extends BasePage {
         phoneInput.sendKeys(phoneNumber);
         selectRole(assignedRoleList);
         selectDD("create_user_country_select", country);
-        selectOrganisationByName("yusuf organisation");
+        selectOrganisationByName(organistaion);
+        System.out.println("sites.toString() = " + sites.toString());
+        selectSites(sites);
+        selectBuildings(buildings);
 
 
     }
+
+    private void selectSites(List<String> sites) {
+        System.out.println(sites.toString());
+
+        for (String site : sites) {
+            try {
+                if (site.equalsIgnoreCase("N/A")) {
+                    System.out.println("site is not applicable for this user in the excel file");
+                } else {
+                    BrowserUtils.waitFor(1);
+                    WebElement element;
+                    try {
+                        element = Driver.get().findElement(By.xpath("//label[.='Select Site']/..//label[@class='lbl-checkbox' and text()='" + site + "']"));
+                    } catch (NoSuchElementException n) {
+                        element = Driver.get().findElement(By.xpath("//label[.='Select Site']/..//label[@class='lbl-checkbox clear' and text()='" + site + "']"));
+                    }
+                    BrowserUtils.scrolltoElement(element);
+                    element.click();
+                }
+            } catch (ElementNotInteractableException e) {
+                BrowserUtils.log("site input is not suitable for this user.. ");
+                System.out.println("COUTION: site input is not suitable for this user.. ");
+            }
+        }
+
+    }
+
+
+    private void selectBuildings(List<String> buildings) {
+        System.out.println("buildings = " + buildings);
+        try {
+            for (String building : buildings) {
+                if (building.equals("N/A")) {
+                    System.out.println("building is not applicable for this user in the excel file");
+                } else {
+                    BrowserUtils.waitFor(1);
+                    WebElement element = Driver.get().findElement(By.xpath("//label[.='Select Building']/../..//label[@class='lbl-checkbox' and text()='" + building + "']"));
+                    BrowserUtils.scrolltoElement(element);
+                    element.click();
+                }
+            }
+        } catch (ElementNotInteractableException e) {
+            BrowserUtils.log("building input is not suitable for this user.. ");
+            System.out.println("COUTION: site input is not suitable for this user.. ");
+        }
+
+    }
+
 
     /**
      * the user detail page should be displayed before this method is invoked
@@ -200,20 +251,40 @@ public class UsersPage extends BasePage {
      * @return: the actual data in the user details page in Map format
      */
     public Map<String, Object> getActualUserDetails() {
-
+        System.out.println("checkpoint1");
         Map<String, Object> actualUserData = new HashMap<>();
-
         actualUserData.put("username", getTextOfInputBox("username"));
         actualUserData.put("email", getTextOfInputBox("em_address"));
         actualUserData.put("title", getSelectedValueDD("title").toString());
+        System.out.println("checkpoint2");
         actualUserData.put("firstName", getTextOfInputBox("firstname"));
         actualUserData.put("middleName", getTextOfInputBox("middlename"));
         actualUserData.put("surname", getTextOfInputBox("lastname"));
         actualUserData.put("phone", phoneInput.getAttribute("value").replace("+", ""));
-        actualUserData.put("assignedRoleList", this.assignedRoleList);
-        actualUserData.put("sitesAssigned", this.sitesAssigned);
-        actualUserData.put("buildingsAssigned", this.buildingsAssigned);
-        actualUserData.put("devicesAssigned", this.devicesAssigned);
+        System.out.println("checkpoint2");
+
+
+//
+//        if (this.assignedRoleList.size()==0) {
+//
+//            List<String> roleL = this.assignedRoleList.stream().map(WebElement::getText).sorted().collect(Collectors.toList());
+//            System.out.println("roleL.toString() = " + roleL.toString());
+//            actualUserData.put("assignedRoleList", roleL);
+//        }
+//        if (this.sitesAssigned.size()==0) {
+//            List<String> siteL = this.sitesAssigned.stream().map(WebElement::getText).sorted().collect(Collectors.toList());
+//            System.out.println("siteL.toString() = " + siteL.toString());
+//            actualUserData.put("assignedSites", siteL);
+//        }
+//        if (this.buildingsAssigned.size()==0) {
+//            List<String> buildingL = this.buildingsAssigned.stream().map(WebElement::getText).sorted().collect(Collectors.toList());
+//            actualUserData.put("assignedBuildings", buildingL);
+//        }
+//        if (this.devicesAssigned.size()==0) {
+//            List<String> deviceL = this.devicesAssigned.stream().map(WebElement::getText).sorted().collect(Collectors.toList());
+//            actualUserData.put("devicesAssigned", deviceL);
+//        }
+
 
         return actualUserData;
 
@@ -233,20 +304,24 @@ public class UsersPage extends BasePage {
         actualUserData.put("firstName", getTextOfInputBox("firstname"));
         actualUserData.put("middleName", getTextOfInputBox("middlename"));
         actualUserData.put("surname", getTextOfInputBox("lastname"));
-        actualUserData.put("phone", getTextOfInputBox("telephone").replace("+",""));
-//        actualUserData.put("phone", phoneInput.getAttribute("value").replace("+", ""));
+        actualUserData.put("phone", getTextOfInputBox("telephone").replace("+", ""));
 
+        List<String> actualRoles = this.rolesAssignedMyProfile.stream().map(s -> s.getText()).collect(Collectors.toList());
+        Collections.sort(actualRoles);
+        actualUserData.put("assignedRoleList", actualRoles);
 
+        List<String> actualSites = this.sitesAssignedMyProfile.stream().map(s -> s.getText()).collect(Collectors.toList());
+        Collections.sort(actualSites);
+        actualUserData.put("assignedSites", actualSites);
 
-        actualUserData.put("assignedRoleList", this.rolesAssignedMyProfile.stream().map(s->s.getText()).collect(Collectors.toList()));
-        actualUserData.put("sitesAssigned", this.sitesAssignedMyProfile.stream().map(s->s.getText()).collect(Collectors.toList()));
-        actualUserData.put("buildingsAssigned", this.buildingsAssignedMyProfile.stream().map(s->s.getText()).collect(Collectors.toList()));
+        List<String> actualBuildings = this.buildingsAssignedMyProfile.stream().map(s -> s.getText()).collect(Collectors.toList());
+        Collections.sort(actualBuildings);
+        actualUserData.put("assignedBuildings", actualBuildings);
 
 
         return actualUserData;
 
     }
-
 
 
 }

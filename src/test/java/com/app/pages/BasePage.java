@@ -10,6 +10,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.List;
 import java.util.Locale;
 
 public abstract class BasePage {
@@ -33,7 +34,7 @@ public abstract class BasePage {
     }
 
     public void navigateToMenu(String menuName) {
-
+        BrowserUtils.waitFor(1);
         Driver.get().findElement(By.xpath("//a[.='" + menuName + "']")).click();
 
         if (menuName.equals("Live Floorplans")) {
@@ -158,12 +159,14 @@ public abstract class BasePage {
      * @param value:      the visible text of the dropdown
      */
     public void selectDD(String dropDownID, String value) {
-        try {
-            WebElement dd = Driver.get().findElement(By.id(dropDownID));
-            Select select = new Select(dd);
-            select.selectByVisibleText(value);
-        }catch (ElementNotInteractableException a) {
-            System.out.println("for certain user type, you can not select country");
+        if (!value.equals("N/A")) {
+            try {
+                WebElement dd = Driver.get().findElement(By.id(dropDownID));
+                Select select = new Select(dd);
+                select.selectByVisibleText(value);
+            } catch (ElementNotInteractableException a) {
+                System.out.println("for certain user type, you can not select country");
+            }
         }
     }
 
@@ -194,6 +197,12 @@ public abstract class BasePage {
         click("My Profile");
 
     }
+
+
+
+//    public List<String> getSitesByOrganisation(String organisationName){
+//
+//    }
 
 
 }

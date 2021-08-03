@@ -37,7 +37,6 @@ public class ExcelUtil {
             // check if sheet is null or not. null means  sheetname was wrong
             Assert.assertNotNull("Sheet: \"" + sheetName + "\" does not exist\n", workSheet);
 
-            getAllData();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -59,20 +58,14 @@ public class ExcelUtil {
             // check if sheet is null or not. null means  sheetname was wrong
             Assert.assertNotNull("Sheet: \"" + sheetName + "\" does not exist\n", workSheet);
 
-            getAllData();
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void getAllData() {
-        for (String sheetName : getSheetNames()) {
 
-
-        }
-
-    }
 
 
     public List<String> getSheetNames() {
@@ -82,7 +75,6 @@ public class ExcelUtil {
             sheetNames.add(workBook.getSheetName(i));
         }
 
-        System.out.println("sheetNames = " + sheetNames);
 
         return sheetNames;
 

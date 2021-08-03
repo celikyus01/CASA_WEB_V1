@@ -52,11 +52,8 @@ public class LoginPage {
         passwordInputBox.sendKeys(password);
         submitBtn.click();
         Assert.assertTrue("Title was expected to be Dashboard, but NOT. ",Driver.get().getCurrentUrl().contains("dashboard"));
+        BrowserUtils.waitForElementToBeVisible(new DashboardPage().username);
         Assert.assertEquals("FATAL FAIL: Mismatch between logged in username and username in the application.. EXPECTED: "+username+" , FOUND: "+ new DashboardPage().username.toString(),username,new DashboardPage().username.getText().trim());
-
-
-
-
        // Assert.assertTrue(Driver.get().getCurrentUrl().contains("dashboard"));
 
     }
@@ -70,11 +67,17 @@ public class LoginPage {
         login(ConfigurationReader.get("usernameDeveloper"), ConfigurationReader.get("passwordDeveloper"));
     }
 
-    public static void main(String[] args) {
-       new LoginPage().loginAsTechnician();
-       new DashboardPage().navigateToMyProfile();
-        System.out.println("aa");
+    public void loginAsInstaller(){
+        login(ConfigurationReader.get("usernameInstaller"), ConfigurationReader.get("passwordInstaller"));
+    }
 
+    public void loginAsOrganisationAdmin(){
+        login(ConfigurationReader.get("usernameOrganisationAdmin"), ConfigurationReader.get("passwordOrganisationAdmin"));
+    }
+
+    public static void main(String[] args) {
+
+        new LoginPage().loginAsInstaller();
 
     }
 

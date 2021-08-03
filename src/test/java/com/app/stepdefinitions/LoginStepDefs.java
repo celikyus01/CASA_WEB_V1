@@ -1,10 +1,7 @@
 package com.app.stepdefinitions;
 
 
-import com.app.pages.DashboardPage;
-import com.app.pages.ForgotPasswordPage;
-import com.app.pages.LoginPage;
-import com.app.pages.UsersPage;
+import com.app.pages.*;
 import com.app.utilities.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;

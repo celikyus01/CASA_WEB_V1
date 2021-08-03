@@ -1,7 +1,7 @@
 ﻿@login
 Feature: Authentication login
 
-  Scenario Outline: M3-4392_Verify Login failure scenario
+  Scenario Outline: Unsuccessful Login
     Given I am on Login Screen
     Then Enter Username '<ValidUsername>' and Password '<InvalidPassword>'
     And Click on Login
@@ -14,7 +14,7 @@ Feature: Authentication login
       | Swathi.priya  | Vashvika        | Swathi          | Vashvika14@   |
 
 
-  Scenario Outline: M3-4402_Verify Mobile user try to login on web app
+  Scenario Outline: Mobile user try to login on web app
     Given I am on Login Screen
     Then Enter Username '<ValidUsername>' and Password '<ValidPassword>'
     And Click on Login
@@ -24,7 +24,7 @@ Feature: Authentication login
       | yogaus.inspector | Asafe@1234    |
 
   @wip7
-  Scenario Outline:M3-1991,M3-1992_User account locked after multiple login attempt failed and verify the functionality to unlock
+  Scenario Outline:User account locked after multiple login attempt failed and verify the functionality to unlock
     Given I am on Login Screen
     Then Enter Username "<usernameforLockedaccount>" and Password "<validpasswordforlockedAccount>"
     And Click on Login
@@ -107,7 +107,7 @@ Feature: Authentication login
 
 
   @wip4 @greyCheck @db
-  Scenario Outline: DATA BASE Verify password can be changed successfully for the "<testCriteria>" criteria for the "<userType>" user type
+  Scenario Outline: Verify password can be changed successfully *DATA BASE*
     Given I am on Login Screen
     When the user clicks on the "Forgot your password?"
     Then Then verify the message "Forgotten your password? Let’s get you a new one"

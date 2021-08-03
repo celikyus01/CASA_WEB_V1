@@ -45,77 +45,20 @@ public class MailUtils {
 
     }
 
+    public static String getTheLinkForResetPassword(long time, String email, String pass, String userName) {
 
-    public static void fetch1(String pop3Host, String storeType, String user,
-                             String password, String expectedUserName) {
-        try {
-            // create properties field
-
-            Properties properties = new Properties();
-            properties.put("mail.store.protocol", "pop3");
-            properties.put("mail.pop3.host", pop3Host);
-            properties.put("mail.pop3.port", "995");
-            properties.put("mail.pop3.starttls.enable", "true");
-            Session emailSession = Session.getDefaultInstance(properties);
-            // emailSession.setDebug(true);
-            // create the POP3 store object and connect with the pop server
-            Store store = emailSession.getStore("pop3s");
-            store.connect(pop3Host, user, password);
-            // create the folder object and open it
-            Folder emailFolder = store.getFolder("INBOX");
-            emailFolder.open(Folder.READ_ONLY);
-            // retrieve the messages from the folder in an array and print it
-            Message[] messages = emailFolder.getMessages();
+        sentTime = time;
+        username = email;
+        password = pass;
+        BrowserUtils.waitFor(4);
+        sentTime = time;
+        String link = fetch2(host, mailStoreType, username, password, userName);
+        System.out.println("link = " + link);
+        return link;
 
 
-            for (int i = 1; i <= 5; i++) {
-                revieveDate = messages[messages.length - i].getSentDate();
-                Message currentMessage = messages[messages.length - i];
-                writePart(currentMessage);
-
-                plainBodyList.add(plainBody);
-
-                int beginIndexOfUsername = plainBody.indexOf("Hi") + 3;
-                int endIndexOfUsername = plainBody.indexOf("You recently requested");
-
-                String actualUserName = plainBody.substring(beginIndexOfUsername, endIndexOfUsername);
-
-
-                if (((revieveDate.getTime() - sentTime) / 1000 < 5)   // elapsed time between send time and recieve time should be less than 5 seconds
-                        && expectedUserName.trim().equals(actualUserName.trim()) // username should be match
-                        && (((new Date().getTime() - currentMessage.getSentDate().getTime()) / 1000) <= 60)) {  // elapsed time between receive and now should be less than a minute
-
-                    int startIndex = plainBody.indexOf("Reset your password") + 19;
-                    int endingIndex = plainBody.indexOf("If you did not request");
-                    String LINK = plainBody.substring(startIndex, endingIndex).trim();
-                    BrowserUtils.log("LINKKK = " + LINK);
-                    BrowserUtils.log("sentDate = " + revieveDate);
-                    BrowserUtils.log("actualUserName = " + actualUserName);
-                    BrowserUtils.log("user = " + user);
-                    BrowserUtils.log("password = " + password);
-
-
-                    Driver.get().navigate().to(LINK);
-                    emailFolder.close(false);
-
-                    store.close();
-                    return;
-                }
-            }
-
-            // close the store and folder objects
-            emailFolder.close(false);
-            store.close();
-            throw new Exception("WARNING: NoSuchEMail: email can not ne found in last 5 emails");
-
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
+
 
 
 
@@ -196,7 +139,7 @@ public class MailUtils {
             // close the store and folder objects
             emailFolder.close(false);
             store.close();
-            throw new Exception("WARNING: NoSuchEMail: email can not ne found in last 5 emails");
+            throw new Exception("WARNING: NoSuchEMail: email can not ne found in last 5 emails for : "+ username);
 
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
@@ -207,6 +150,99 @@ public class MailUtils {
         }
     }
 
+
+    public static String fetch2(String pop3Host, String storeType, String user,
+                             String password, String expectedUserName) {
+
+
+        String LINK=null;
+        try {
+            // create properties field
+
+            Properties properties = new Properties();
+            properties.put("mail.store.protocol", "pop3");
+            properties.put("mail.pop3.host", pop3Host);
+            properties.put("mail.pop3.port", "995");
+            properties.put("mail.pop3.starttls.enable", "true");
+            Session emailSession = Session.getDefaultInstance(properties);
+            // emailSession.setDebug(true);
+            // create the POP3 store object and connect with the pop server
+            Store store = emailSession.getStore("pop3s");
+            store.connect(pop3Host, user, password);
+            // create the folder object and open it
+            Folder emailFolder = store.getFolder("INBOX");
+            emailFolder.open(Folder.READ_ONLY);
+            // retrieve the messages from the folder in an array and print it
+            Message[] messages = emailFolder.getMessages();
+
+
+
+            for (int i = 1; i <= 5; i++) {
+                revieveDate = messages[messages.length - i].getSentDate();
+                Message currentMessage = messages[messages.length - i];
+                writePart(currentMessage);
+
+                plainBodyList.add(plainBody);
+
+
+                System.out.println("plainBody.toString() = " + plainBody.toString());
+
+
+//                    int beginIndexOfUsername = plainBody.indexOf("Hi") + 3;
+//                int endIndexOfUsername = plainBody.indexOf("You recently requested");
+//
+//                int beginIndexOfUsername = plainBody.indexOf("Username:") + 9;
+//                int endIndexOfUsername = plainBody.indexOf("Email:");
+
+//                String actualUserName = plainBody.substring(beginIndexOfUsername, endIndexOfUsername).trim();
+
+
+
+                if (((revieveDate.getTime() - sentTime) / 1000 < 5)   // elapsed time between send time and recieve time should be less than 5 seconds
+                        && (plainBody.contains(expectedUserName)) // username should be match
+                        && (((new Date().getTime() - currentMessage.getSentDate().getTime()) / 1000) <= 60)) {  // elapsed time between receive and now should be less than a minute
+
+                    try{
+                        int startIndex = plainBody.indexOf("Reset your password") + 19;
+                        int endingIndex = plainBody.indexOf("If you did not request");
+                        LINK = plainBody.substring(startIndex, endingIndex).trim();
+
+                    }catch (StringIndexOutOfBoundsException s){
+                        int startIndex = plainBody.indexOf("Create Password") + 15;
+                        int endingIndex = plainBody.indexOf("(c) 2021 A-SAFE. All rights reserved.");
+                        LINK = plainBody.substring(startIndex, endingIndex).trim();
+                    }
+
+                    BrowserUtils.log("LINK = " + LINK);
+                    BrowserUtils.log("sentDate = " + revieveDate);
+                    BrowserUtils.log("actualUserName = " + username);
+                    BrowserUtils.log("user = " + user);
+                    BrowserUtils.log("password = " + password);
+
+
+                 //   Driver.get().navigate().to(LINK);
+                    emailFolder.close(false);
+
+                    store.close();
+                    return LINK;
+                }
+            }
+
+            // close the store and folder objects
+            emailFolder.close(false);
+            store.close();
+            throw new Exception("WARNING: NoSuchEMail: email can not ne found in last 5 emails for : "+ username);
+
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return LINK;
+    }
 
     /*
      * This method checks for content-type
